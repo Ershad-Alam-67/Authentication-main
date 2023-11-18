@@ -1,8 +1,9 @@
-import { useState, useRef } from "react"
-
 import classes from "./AuthForm.module.css"
+import { useState, useRef } from "react"
+import { useHistory } from "react-router-dom"
 
 const AuthForm = () => {
+  const history = useHistory()
   const emailRef = useRef()
   const passRef = useRef()
   const [isLogin, setIsLogin] = useState(false)
@@ -12,19 +13,77 @@ const AuthForm = () => {
     setIsLogin((prevState) => !prevState)
     setSendingRequest(false)
   }
-  const handleLoader = () => {
-    setSendingRequest(true)
-  }
+
   const submitHandler = (event) => {
     event.preventDefault()
+    setSendingRequest(true)
+
     const enteredEmail = emailRef.current.value
     const enteredPass = passRef.current.value
+    if (isLogin) {
+      fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBu9XdkuYIsztfXH0mRtYQn08aiWInvtqI",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPass,
+            returnSecureToken: true,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => {
+          if (res.ok) {
+            history.push("/")
+            return res.json()
+          } else {
+            return res.json().then((data) => {
+              alert(data.error.message)
+            })
+          }
+        })
+        .then((data) => {
+          console.log("hii")
+          setSendingRequest(false)
+          console.log(data.idToken)
+        })
+    } else {
+      fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBu9XdkuYIsztfXH0mRtYQn08aiWInvtqI",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPass,
+            returnSecureToken: true,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => {
+          if (res.ok) {
+            history.push("/")
+            return res.json()
+          } else {
+            return res.json().then((data) => {
+              alert(data.error.message)
+            })
+          }
+        })
+        .then(() => {
+          setSendingRequest(false)
+        })
+    }
   }
-
   return (
     <section className={classes.auth}>
       <h1>{isLogin ? "Login" : "Sign Up"}</h1>
-      <form>
+      <form onSubmit={submitHandler}>
         <div className={classes.control}>
           <label htmlFor="email">Your Email</label>
           <input ref={emailRef} type="email" id="email" required />
@@ -37,8 +96,8 @@ const AuthForm = () => {
           {sendingRequest ? (
             <h1>Sending Request...</h1>
           ) : (
-            <button onClick={handleLoader}>
-              {isLogin && !sendingRequest ? "Login" : "Create Account"}
+            <button onClick={submitHandler}>
+              {isLogin ? "Login" : "Create Account"}
             </button>
           )}
           <button
