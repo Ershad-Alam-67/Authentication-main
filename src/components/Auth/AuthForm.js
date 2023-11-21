@@ -40,7 +40,7 @@ const AuthForm = () => {
       )
         .then((res) => {
           if (res.ok) {
-            history.push("/")
+            history.push("/profile")
             context.setIsLogIn(true)
             return res.json()
           } else {
@@ -52,6 +52,7 @@ const AuthForm = () => {
         .then((data) => {
           console.log("hii")
           setSendingRequest(false)
+          context.setToken(data.idToken)
           console.log(data.idToken)
         })
     } else {
@@ -71,7 +72,8 @@ const AuthForm = () => {
       )
         .then((res) => {
           if (res.ok) {
-            history.push("/")
+            history.push("/profile")
+            context.setIsLogIn(true)
             return res.json()
           } else {
             return res.json().then((data) => {
@@ -79,8 +81,9 @@ const AuthForm = () => {
             })
           }
         })
-        .then(() => {
+        .then((data) => {
           setSendingRequest(false)
+          context.setToken(data.idToken)
         })
     }
   }
