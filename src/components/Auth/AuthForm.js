@@ -1,8 +1,11 @@
 import classes from "./AuthForm.module.css"
-import { useState, useRef } from "react"
+import { useState, useRef, useContext } from "react"
 import { useHistory } from "react-router-dom"
+import MyContext from "../Context/AuthContext"
 
 const AuthForm = () => {
+  const context = useContext(MyContext)
+
   const history = useHistory()
   const emailRef = useRef()
   const passRef = useRef()
@@ -38,6 +41,7 @@ const AuthForm = () => {
         .then((res) => {
           if (res.ok) {
             history.push("/")
+            context.setIsLogIn(true)
             return res.json()
           } else {
             return res.json().then((data) => {
