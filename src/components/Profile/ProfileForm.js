@@ -7,7 +7,8 @@ const ProfileForm = () => {
 
   const context = useContext(MyContext)
   console.log(context)
-  const changePassword = () => {
+  const changePassword = (event) => {
+    event.preventDefault()
     const newPass = passRef.current.value
     fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBu9XdkuYIsztfXH0mRtYQn08aiWInvtqI",
@@ -29,11 +30,11 @@ const ProfileForm = () => {
         }
       })
       .then((data) => {
-        console.log(data)
+        alert("Password Changed!")
       })
   }
   return (
-    <form className={classes.form}>
+    <form onSubmit={changePassword} className={classes.form}>
       <div className={classes.control}>
         <label htmlFor="new-password">New Password</label>
         <input type="password" ref={passRef} id="new-password" />

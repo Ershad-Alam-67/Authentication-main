@@ -9,7 +9,7 @@ const AuthForm = () => {
   const history = useHistory()
   const emailRef = useRef()
   const passRef = useRef()
-  const [isLogin, setIsLogin] = useState(false)
+  const [isLogin, setIsLogin] = useState(true)
   const [sendingRequest, setSendingRequest] = useState(false)
 
   const switchAuthModeHandler = () => {
@@ -50,10 +50,14 @@ const AuthForm = () => {
           }
         })
         .then((data) => {
-          console.log("hii")
-          setSendingRequest(false)
-          context.setToken(data.idToken)
-          console.log(data.idToken)
+          if (data) {
+            console.log("hii")
+            setSendingRequest(false)
+            context.setToken(data.idToken)
+            console.log(data.idToken)
+          } else {
+            setSendingRequest(false)
+          }
         })
     } else {
       fetch(

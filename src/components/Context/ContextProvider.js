@@ -1,18 +1,25 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import MyContext from "./AuthContext"
 
 const ContextProvider = ({ children }) => {
-  const [token, setToken] = useState("")
-  const [isLogIn, setIsLogIn] = useState(false)
+  const storedUser = JSON.parse(localStorage.getItem("User")) || {}
+  const [token, setToken] = useState(storedUser.token || "")
+  const [isLogIn, setIsLogIn] = useState(storedUser.isLogIn || false)
+
+  useEffect(() => {
+    localStorage.setItem("User", JSON.stringify({ token, isLogIn }))
+  }, [token, isLogIn])
+
   const contextValue = {
-    token: token,
-    setToken: setToken,
-    isLogIn: isLogIn,
-    setIsLogIn: setIsLogIn,
+    token,
+    setToken,
+    isLogIn,
+    setIsLogIn,
   }
 
   return (
     <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>
   )
 }
+
 export default ContextProvider
